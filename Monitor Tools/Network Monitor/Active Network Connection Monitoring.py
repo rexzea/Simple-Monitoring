@@ -13,9 +13,9 @@ import os
 class NetworkConnectionMonitor:
     def __init__(self, log_path='network_monitor.log', db_path='network_connections.db'):
         """
-        Inisialisasi monitor koneksi jaringan dengan fitur komprehensif
+        Inisialisasi monitor koneksi jaringan
         """
-        # Konfigurasi logging
+        # mengkonfigurasi logging
         logging.basicConfig(
             level=logging.INFO,
             format='%(asctime)s - %(levelname)s: %(message)s',
@@ -46,7 +46,7 @@ class NetworkConnectionMonitor:
         self.process_cache = {}
     
     def _init_database(self):
-        """Membuat database untuk menyimpan log koneksi"""
+        """membuat database untuk menyimpan log koneksi"""
         try:
             with sqlite3.connect(self.db_path) as conn:
                 cursor = conn.cursor()
@@ -267,7 +267,7 @@ def main():
     print("🌐 Network Connection Monitor 🌐")
     print("--------------------------------")
     
-    # izin administrator
+    # izin kalau administrator
     try:
         monitor = NetworkConnectionMonitor()
         monitor.continuous_monitor()
