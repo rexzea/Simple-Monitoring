@@ -7,7 +7,7 @@ from datetime import datetime
 
 def get_size(bytes, suffix="B"):
     """
-    Mengubah byte menjadi format yang lebih mudah dibaca
+    mengubah menjadi format biar lebih mudah dibaca
     """
     factor = 1024
     for unit in ["", "K", "M", "G", "T", "P"]:
@@ -17,7 +17,7 @@ def get_size(bytes, suffix="B"):
 
 def get_gpu_info():
     """
-    Mencoba mendapatkan informasi GPU dengan berbagai metode
+    mencari informasi GPU
     """
     try:
         # Metode 1: Coba import GPUtil
@@ -29,7 +29,7 @@ def get_gpu_info():
         except ImportError:
             pass
 
-        # Metode 2: Gunakan WMI untuk Windows
+        # Metode 2: Gunakan WMI for Windows
         try:
             import _wmi
             c = _wmi.WMI()
@@ -38,11 +38,11 @@ def get_gpu_info():
         except ImportError:
             pass
 
-        # Metode 3: Gunakan subprocess untuk informasi GPU
+        # Metode 3: Gunakan subprocess for informasi GPU
         try:
             import subprocess
             
-            # Untuk Windows
+            # untuk Windows
             if platform.system() == "Windows":
                 try:
                     output = subprocess.check_output(["wmic", "path", "win32_VideoController", "get", "name"], universal_newlines=True)
@@ -50,7 +50,7 @@ def get_gpu_info():
                 except:
                     pass
             
-            # Untuk Linux
+            # untuk Linux
             elif platform.system() == "Linux":
                 try:
                     output = subprocess.check_output(["lspci", "-vnn", "|", "grep", "VGA"], universal_newlines=True)
@@ -75,7 +75,7 @@ def monitor_system():
 
     while True:
         try:
-            # Informasi Sistem Utama
+            # info sistem utama
             print("\n📊 OVERVIEW SISTEM:")
             uname = platform.uname()
             print(f"🖥️  Sistem: {uname.system} {uname.release}")
@@ -89,21 +89,21 @@ def monitor_system():
             for i, percentage in enumerate(psutil.cpu_percent(percpu=True, interval=1)):
                 print(f"   Core {i+1}: {percentage}%")
             
-            # Memory (RAM)
+            # memory (RAM)
             memory = psutil.virtual_memory()
             print("\n🧠 PENGGUNAAN MEMORY:")
             print(f"💾 Total: {get_size(memory.total)}")
             print(f"🔋 Tersedia: {get_size(memory.available)}")
             print(f"🔥 Digunakan: {get_size(memory.used)} ({memory.percent}%)")
             
-            # Disk
+            # disk
             disk = psutil.disk_usage('/')
             print("\n💽 PENGGUNAAN DISK:")
             print(f"💾 Total: {get_size(disk.total)}")
             print(f"🔥 Terpakai: {get_size(disk.used)} ({disk.percent}%)")
             print(f"🆓 Tersedia: {get_size(disk.free)}")
             
-            # Jaringan
+            # jaringan
             net_io = psutil.net_io_counters()
             print("\n🌐 STATISTIK JARINGAN:")
             print(f"📤 Data Terkirim: {get_size(net_io.bytes_sent)}")
@@ -116,17 +116,17 @@ def monitor_system():
             except Exception as ip_err:
                 print(f"\n❌ Gagal mendapatkan IP: {ip_err}")
             
-            # GPU (Opsional)
+          
             print(f"\n🎮 {get_gpu_info()}")
             
-            # Waktu
+            # waktu
             print(f"\n🕒 Waktu Pemantauan: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
             
             print("\n" + "=" * 50)
             print("Tekan Ctrl+C untuk keluar".center(50))
             print("=" * 50)
             
-            time.sleep(5)  # Jeda 5 detik
+            time.sleep(5)  # jeda 5 detik
             
         except KeyboardInterrupt:
             print("\n✋ Pemantauan dihentikan oleh pengguna.")
