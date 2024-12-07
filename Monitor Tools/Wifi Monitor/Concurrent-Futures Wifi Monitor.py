@@ -11,7 +11,7 @@ from typing import Dict, List, Optional
 class OptimizedWiFiMonitor:
     def __init__(self, log_file='wifi_monitoring.log'):
         """
-        Inisialisasi sistem monitoring jaringan Wi-Fi dengan optimasi
+        Inisialisasi sistem monitoring jaringan WiFi dengan optimasi
         
         Args:
             log_file (str): Path file log untuk pencatatan aktivitas
@@ -32,10 +32,10 @@ class OptimizedWiFiMonitor:
 
     def identify_network(self):
         """
-        Identifikasi jaringan Wi-Fi yang sedang digunakan
+        Identifikasi jaringan WiFi yang sedang digunakan
         """
         try:
-            # Dapatkan gateway dan IP lokal
+            # menvari GateAway dan IP Lokal
             gateways = self._get_network_gateways()
             return {
                 'gateway': gateways[0] if gateways else 'Tidak Terdeteksi',
@@ -51,7 +51,7 @@ class OptimizedWiFiMonitor:
         Dapatkan alamat IP lokal
         """
         try:
-            # Metode alternatif untuk mendapatkan IP lokal
+            # alternatif
             s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
             s.connect(("8.8.8.8", 80))
             local_ip = s.getsockname()[0]
@@ -62,18 +62,18 @@ class OptimizedWiFiMonitor:
 
     def _get_network_prefix(self):
         """
-        Dapatkan prefix jaringan
+        prefix jaringan
         """
         local_ip = self._get_local_ip()
         return '.'.join(local_ip.split('.')[:3])
 
     def _get_network_gateways(self):
         """
-        Dapatkan gateway jaringan
+        gateway jaringan
         """
         try:
             if self.os_type == 'Windows':
-                # Perintah untuk Windows
+                # for windows
                 result = subprocess.run(['ipconfig'], capture_output=True, text=True)
                 gateways = []
                 for line in result.stdout.split('\n'):
@@ -83,7 +83,7 @@ class OptimizedWiFiMonitor:
                             gateways.append(gateway)
                 return gateways
             elif self.os_type in ['Linux', 'Darwin']:
-                # Perintah untuk Linux/MacOS
+                # for Linux/MacOS
                 result = subprocess.run(['ip', 'route'], capture_output=True, text=True)
                 gateways = []
                 for line in result.stdout.split('\n'):
@@ -97,7 +97,7 @@ class OptimizedWiFiMonitor:
 
     def scan_network_fast(self, timeout=1, max_threads=100):
         """
-        Pindai jaringan dengan metode konkurensi untuk kecepatan
+        pindai jaringan dengan metode konkurensi untuk kecepatan
         
         Args:
             timeout (int): Waktu timeout untuk setiap ping
@@ -114,7 +114,7 @@ class OptimizedWiFiMonitor:
             Fungsi internal untuk melakukan ping
             """
             try:
-                # Gunakan ping dengan timeout pendek
+                # memeakai ping timeout pendek
                 result = subprocess.run(
                     ['ping', '-c', '1', '-W', str(timeout), ip], 
                     capture_output=True, 
@@ -122,7 +122,7 @@ class OptimizedWiFiMonitor:
                     timeout=timeout
                 )
                 
-                # Jika ping berhasil, coba resolusi hostname
+                # kalau ping berhasil, coba resolusi hostname
                 if result.returncode == 0:
                     try:
                         hostname = socket.gethostbyaddr(ip)[0]
@@ -140,15 +140,15 @@ class OptimizedWiFiMonitor:
                 pass
             return None
 
-        # Gunakan ThreadPoolExecutor untuk ping konkurensi
+        # memakai ThreadPoolExecutor untuk ping
         with concurrent.futures.ThreadPoolExecutor(max_workers=max_threads) as executor:
             # Buat daftar IP untuk dipindai
             ips_to_scan = [f"{network_prefix}.{i}" for i in range(1, 255)]
             
-            # Jalankan ping untuk semua IP secara konkurensi
+            # jlankan ping untuk semua IP
             futures = [executor.submit(ping_ip, ip) for ip in ips_to_scan]
             
-            # Kumpulkan hasil
+            # hasil
             for future in concurrent.futures.as_completed(futures):
                 result = future.result()
                 if result:
@@ -176,10 +176,10 @@ class OptimizedWiFiMonitor:
         def monitor_task():
             while True:
                 try:
-                    # Dapatkan informasi jaringan
+                    # informasi jaringan
                     network_info = self.get_network_info()
                     
-                    # Cetak informasi
+                    # mencetak informasi
                     print("\n--- Monitoring Jaringan ---")
                     print(f"Jaringan: {network_info['network']}")
                     print(f"Perangkat Aktif: {network_info['device_count']}")
@@ -187,29 +187,29 @@ class OptimizedWiFiMonitor:
                     for device in network_info['active_devices']:
                         print(f"  - IP: {device['ip']}, Hostname: {device['hostname']}")
                     
-                    # Log informasi
+                    # log informasi
                     self.logger.info(f"Monitoring Jaringan: {network_info}")
                     
-                    # Jeda sebelum monitor selanjutnya
+                    # deda sebelum monitor selanjutnya
                     time.sleep(interval)
                 
                 except Exception as e:
                     self.logger.error(f"Kesalahan monitoring: {e}")
                     break
 
-        # Jalankan monitoring di thread terpisah
+
         monitoring_thread = threading.Thread(target=monitor_task)
         monitoring_thread.daemon = True
         monitoring_thread.start()
 
 def main():
-    # Inisialisasi monitor
+    # inisialisasi monitor
     wifi_monitor = OptimizedWiFiMonitor()
     
-    # Mulai monitoring
+    # mulai monitoring
     wifi_monitor.continuous_monitoring(interval=300)  # Setiap 5 menit
     
-    # Pertahankan program berjalan
+    # tahan program berjalan
     try:
         while True:
             time.sleep(1)
