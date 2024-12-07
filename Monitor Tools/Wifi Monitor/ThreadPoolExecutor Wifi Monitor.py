@@ -33,7 +33,7 @@ class WiFiMonitor:
     def _get_local_ip(self):
         """Dapatkan alamat IP lokal"""
         try:
-            # Buat soket sementara untuk mendapatkan IP
+            # buat soket sementara untuk mencari IP
             s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
             s.connect(("8.8.8.8", 80))
             local_ip = s.getsockname()[0]
@@ -46,7 +46,7 @@ class WiFiMonitor:
     def _get_subnet(self):
         """Dapatkan subnet dari IP lokal"""
         try:
-            # Buat objek IP dengan subnet /24
+            # buat objek IP dengan subnet /24
             network = ipaddress.IPv4Network(f"{self.local_ip}/24", strict=False)
             return network
         except Exception as e:
@@ -69,10 +69,10 @@ class WiFiMonitor:
 
         devices = []
         
-        # Fungsi untuk melakukan ping pada satu IP
+        # melakukan ping pada satu IP
         def ping_ip(ip):
             try:
-                # Gunakan ping dengan timeout singkat
+                # pakai ping dengan timeout singkat
                 result = subprocess.run(
                     ['ping', '-c', '1', '-W', str(timeout), str(ip)],
                     capture_output=True,
@@ -82,12 +82,12 @@ class WiFiMonitor:
                 
                 if result.returncode == 0:
                     try:
-                        # Coba dapatkan hostname
+                        # ccoba dapatkan hostname
                         hostname = socket.gethostbyaddr(str(ip))[0]
                     except:
                         hostname = 'Unknown'
                     
-                    # Dapatkan MAC address (metode berbeda di setiap OS)
+                    # mencari MAC address
                     mac = self._get_mac_address(str(ip))
                     
                     return {
@@ -102,12 +102,12 @@ class WiFiMonitor:
             
             return None
 
-        # Gunakan ThreadPoolExecutor untuk concurrent scanning
+        # pakai ThreadPoolExecutor buat mengconcurrent scanning
         with concurrent.futures.ThreadPoolExecutor(max_workers=max_threads) as executor:
             # Buat daftar IP untuk di-ping
             ip_list = [str(ip) for ip in self.subnet.hosts()]
             
-            # Jalankan ping secara concurrent
+            # jalankan ping secara concurrent
             future_to_ip = {executor.submit(ping_ip, ip): ip for ip in ip_list}
             
             for future in concurrent.futures.as_completed(future_to_ip):
@@ -123,7 +123,7 @@ class WiFiMonitor:
         """
         try:
             if self.os_type == 'Windows':
-                # Gunakan perintah arp untuk Windows
+                #pakai perintah arp untuk Windows
                 arp_result = subprocess.run(['arp', '-a', ip], 
                                             capture_output=True, 
                                             text=True)
@@ -131,7 +131,7 @@ class WiFiMonitor:
                 if mac_lines:
                     return mac_lines[0].split()[1]
             elif self.os_type == 'Linux':
-                # Untuk Linux, gunakan metode berbeda
+                # kalau Linux, memeakai cara yang beda (lupa)
                 arp_result = subprocess.run(['ip', 'neigh', 'show'], 
                                             capture_output=True, 
                                             text=True)
@@ -141,7 +141,7 @@ class WiFiMonitor:
         except Exception as e:
             self.logger.error(f"Gagal mendapatkan MAC address: {e}")
         
-        # Fallback: generate MAC dummy
+       
         return ':'.join(['{:02x}'.format((uuid.getnode() >> elements) & 0xff) 
                          for elements in range(0,2*6,2)][::-1])
 
@@ -150,7 +150,7 @@ class WiFiMonitor:
         Dapatkan informasi jaringan komprehensif
         """
         try:
-            # Identifikasi jaringan
+            # mengidentifikasi jaringan
             network_details = {
                 'local_ip': self.local_ip,
                 'subnet': str(self.subnet) if self.subnet else 'Unknown',
@@ -169,10 +169,10 @@ class WiFiMonitor:
         def monitor_task():
             while True:
                 try:
-                    # Dapatkan informasi jaringan
+                    # mencari informasi jaringan
                     network_info = self.get_network_info()
                     
-                    # Cetak informasi
+                    # mencetak informasi
                     print("\n--- Monitoring Jaringan ---")
                     print(f"IP Lokal: {network_info.get('local_ip', 'Unknown')}")
                     print(f"Subnet: {network_info.get('subnet', 'Unknown')}")
@@ -182,35 +182,35 @@ class WiFiMonitor:
                               f"Hostname: {device['hostname']}, "
                               f"MAC: {device['mac']}")
                     
-                    # Log informasi
+                    # log informasi
                     self.logger.info(f"Pemindaian Jaringan: {len(network_info.get('devices', []))} perangkat terdeteksi")
                     
-                    # Tunggu interval
+                    # tunggu interval
                     time.sleep(interval)
                 
                 except Exception as e:
                     self.logger.error(f"Kesalahan monitoring: {e}")
                     break
 
-        # Jalankan monitoring di thread terpisah
+        # menjalankan monitoring di thread terpisah
         monitoring_thread = threading.Thread(target=monitor_task)
         monitoring_thread.daemon = True
         monitoring_thread.start()
 
 def main():
-    # Inisialisasi monitor jaringan
+    # nisialisasi monitor jaringan
     wifi_monitor = WiFiMonitor()
     
-    # Lakukan scan awal
+    # lakukan scan pas awal
     initial_scan = wifi_monitor.get_network_info()
     print("Perangkat Terdeteksi Saat Ini:")
     for device in initial_scan.get('devices', []):
         print(f"  - {device}")
     
-    # Mulai monitoring berkelanjutan
+    # mullai monitoring berkelanjutan
     wifi_monitor.continuous_monitoring(interval=300)  # Setiap 5 menit
 
-    # Pertahankan program berjalan
+    # mempertahankan program berjalan
     try:
         while True:
             time.sleep(1)
