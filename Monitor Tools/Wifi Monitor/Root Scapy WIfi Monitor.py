@@ -21,7 +21,7 @@ class WiFiMonitor:
         self.os_type = platform.system()
         self.current_network = None
         
-        # Konfigurasi logging
+        # konfigurasi logging
         logging.basicConfig(
             filename=log_file, 
             level=logging.INFO, 
@@ -31,7 +31,7 @@ class WiFiMonitor:
 
     def identify_current_network(self) -> Optional[Dict[str, str]]:
         """
-        Identifikasi jaringan Wi-Fi yang sedang digunakan
+        Identifikasi jaringan WiFi yang sedang digunakan
         
         Returns:
             Dict dengan informasi jaringan atau None
@@ -86,32 +86,32 @@ class WiFiMonitor:
             Daftar perangkat dalam jaringan
         """
         try:
-            # Dapatkan alamat IP lokal
+            # mencari alamat IP lokal
             hostname = socket.gethostname()
             local_ip = socket.gethostbyname(hostname)
             
-            # Ambil prefix subnet (misal dari 192.168.1.100 menjadi 192.168.1)
+            # ambil prefix subnet (misalnya kalau IP dari 192.168.1.100 jadi 192.168.1)
             ip_prefix = '.'.join(local_ip.split('.')[:3])
             
             devices = []
             
-            # Coba ping sejumlah alamat IP dalam subnet
+            # coba ping sejumlah alamat IP dalam subnet
             for i in range(1, 255):
                 test_ip = f"{ip_prefix}.{i}"
                 try:
-                    # Gunakan subprocess untuk ping
+                    # pakai subprocess 
                     result = subprocess.run(['ping', '-c', '1', '-W', '1', test_ip], 
                                             capture_output=True, 
                                             text=True)
                     
                     if result.returncode == 0:
                         try:
-                            # Coba resolusi nama host
+                            # coba resolusi nama host
                             hostname = socket.gethostbyaddr(test_ip)[0]
                         except:
                             hostname = 'Unknown'
                         
-                        # Dapatkan MAC address menggunakan ARP (untuk Windows)
+                        # mencari MAC address pakai ARP (untuk Windows)
                         if self.os_type == 'Windows':
                             try:
                                 arp_result = subprocess.run(['arp', '-a', test_ip], 
@@ -129,7 +129,7 @@ class WiFiMonitor:
                             'mac': mac
                         })
                 except Exception as e:
-                    # Abaikan kesalahan ping
+                    # mengabaikan kesalahan ping
                     pass
             
             return devices
@@ -147,10 +147,10 @@ class WiFiMonitor:
             Dict dengan kecepatan dalam Mbps
         """
         try:
-            # Gunakan API eksternal untuk tes kecepatan
+            # pakai API eksternal untuk tes kecepatan
             speed_test = requests.get('https://api.ipify.org/speed', timeout=10)
             
-            # Ukur waktu respons sebagai proksi kecepatan
+            # ukur waktu respons sebagai proksi kecepatan
             download_speed = 1 / speed_test.elapsed.total_seconds() * 8
             
             return {
@@ -163,7 +163,7 @@ class WiFiMonitor:
 
     def get_signal_strength(self) -> Optional[int]:
         """
-        Dapatkan kekuatan sinyal jaringan Wi-Fi
+        Dapatkan kekuatan sinyal jaringan WiFi
         
         Returns:
             Kekuatan sinyal dalam persen
@@ -192,19 +192,19 @@ class WiFiMonitor:
         def monitor_task():
             while True:
                 try:
-                    # Kumpulkan informasi jaringan
+                    # pengumpulan informasi jaringan
                     network_info = self.identify_current_network()
                     devices = self.get_local_devices()
                     speed_info = self.get_network_speed()
                     signal_strength = self.get_signal_strength()
 
-                    # Log informasi
+                    # log informasi
                     self.logger.info(f"Jaringan: {network_info}")
                     self.logger.info(f"Perangkat Terhubung: {len(devices)}")
                     self.logger.info(f"Kecepatan: {speed_info}")
                     self.logger.info(f"Kekuatan Sinyal: {signal_strength}%")
 
-                    # Cetak informasi
+                    # mencetak informasi
                     print("\n--- Monitoring Jaringan ---")
                     print(f"Jaringan: {network_info}")
                     print(f"Perangkat Terhubung: {len(devices)}")
@@ -221,7 +221,7 @@ class WiFiMonitor:
                     self.logger.error(f"Kesalahan monitoring: {e}")
                     break
 
-        # Jalankan monitoring di thread terpisah
+        # menjalankan monitoring di thread terpisah
         monitoring_thread = threading.Thread(target=monitor_task)
         monitoring_thread.daemon = True
         monitoring_thread.start()
@@ -229,10 +229,10 @@ class WiFiMonitor:
 def main():
     wifi_monitor = WiFiMonitor()
     
-    # Mulai monitoring berkelanjutan
+    # mulai monitoring berkelanjutan
     wifi_monitor.continuous_monitoring(interval=300)  # Setiap 5 menit
 
-    # Pertahankan program berjalan
+    # mempertahankan program berjalan
     try:
         while True:
             time.sleep(1)
