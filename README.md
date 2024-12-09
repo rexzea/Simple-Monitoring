@@ -83,7 +83,7 @@ Kecepatan Upload: 9.4 Mbps
 Kekuatan Sinyal: 84%
 IP Lokal: kepo lu
 Subnet: kepo lu
-Daftar Perangkat: !Laptop saya nge-frame
+Daftar Perangkat: kepo lu
 Monitoring dihentikan.
 ```
 ![m1](assets/m1.png)
