@@ -6,9 +6,7 @@ import logging
 from datetime import datetime
 
 def get_size(bytes, suffix="B"):
-    """
-    mengubah menjadi format biar lebih mudah dibaca
-    """
+
     factor = 1024
     for unit in ["", "K", "M", "G", "T", "P"]:
         if bytes < factor:
@@ -16,9 +14,7 @@ def get_size(bytes, suffix="B"):
         bytes /= factor
 
 def get_gpu_info():
-    """
-    mencari informasi GPU
-    """
+
     try:
         # Metode 1: Coba import GPUtil
         try:
@@ -29,7 +25,7 @@ def get_gpu_info():
         except ImportError:
             pass
 
-        # Metode 2: Gunakan WMI for Windows
+        # Metode 2: memakai WMI for Windows
         try:
             import _wmi
             c = _wmi.WMI()
@@ -38,7 +34,7 @@ def get_gpu_info():
         except ImportError:
             pass
 
-        # Metode 3: Gunakan subprocess for informasi GPU
+        # Metode 3: menggunakn subproces for informasi GPU
         try:
             import subprocess
             
