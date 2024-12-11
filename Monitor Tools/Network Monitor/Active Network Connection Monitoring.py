@@ -12,9 +12,7 @@ import os
 
 class NetworkConnectionMonitor:
     def __init__(self, log_path='network_monitor.log', db_path='network_connections.db'):
-        """
-        Inisialisasi monitor koneksi jaringan
-        """
+
         # mengkonfigurasi logging
         logging.basicConfig(
             level=logging.INFO,
@@ -80,9 +78,7 @@ class NetworkConnectionMonitor:
             self.logger.error(f"Database initialization error: {e}")
     
     def _get_process_name(self, pid):
-        """
-        Mendapatkan nama proses berdasarkan PID dengan caching
-        """
+
         if pid in self.process_cache:
             return self.process_cache[pid]
         
@@ -95,9 +91,7 @@ class NetworkConnectionMonitor:
             return "Unknown"
     
     def _is_suspicious_connection(self, connection):
-        """
-        Mengidentifikasi koneksi yang aneh/mencurigakan
-        """
+
         # anomali atau kejanggalan
         suspicious_conditions = [
             connection.laddr.port in self.suspicious_ports,
@@ -108,9 +102,7 @@ class NetworkConnectionMonitor:
         return any(suspicious_conditions)
     
     def _is_private_ip(self, ip):
-        """
-        Memeriksa apakah IPnya adalah IP privat
-        """
+
         private_ranges = [ # kamus
             re.compile(r'^10\.'),           # 10.0.0.0 - 10.255.255.255 
             re.compile(r'^172\.(1[6-9]|2\d|3[0-1])\.'),  # 172.16.0.0 - 172.31.255.255
@@ -121,9 +113,7 @@ class NetworkConnectionMonitor:
         return any(pattern.match(ip) for pattern in private_ranges)
     
     def log_connection(self, connection, is_suspicious):
-        """
-        Mencatat koneksi ke database
-        """
+
         try:
             with sqlite3.connect(self.db_path) as conn:
                 cursor = conn.cursor()
@@ -145,9 +135,7 @@ class NetworkConnectionMonitor:
             self.logger.error(f"Error logging connection: {e}")
     
     def log_alert(self, alert_type, description):
-        """
-        Mencatat alert ke database
-        """
+
         try:
             with sqlite3.connect(self.db_path) as conn:
                 cursor = conn.cursor()
@@ -159,9 +147,7 @@ class NetworkConnectionMonitor:
             self.logger.error(f"Error logging alert: {e}")
     
     def analyze_connections(self):
-        """
-        Analisis koneksi jaringan
-        """
+
         try:
             connections = psutil.net_connections()
             suspicious_connections = []
@@ -204,9 +190,7 @@ class NetworkConnectionMonitor:
             return []
     
     def get_connection_summary(self):
-        """
-        Menghasilkan ringkasan koneksi
-        """
+
         try:
             with sqlite3.connect(self.db_path) as conn:
                 cursor = conn.cursor()
@@ -239,9 +223,7 @@ class NetworkConnectionMonitor:
             return {}
     
     def continuous_monitor(self, interval=30):
-        """
-        Monitoring berkelanjutan
-        """
+
         try:
             while True:
                 print("\n📡 Memindai Koneksi yang sedang Aktif...")
