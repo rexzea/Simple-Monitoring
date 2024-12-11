@@ -13,16 +13,14 @@ from typing import Dict, List, Optional
 
 class WiFiMonitor:
     def __init__(self, log_file='wifi_monitoring.log'):
-        """
-        Inisialisasi sistem monitoring jaringan Wi-Fi dengan optimasi
-        """
+
         self.os_type = platform.system()
         self.logger = self._setup_logging(log_file)
         self.local_ip = self._get_local_ip()
         self.subnet = self._get_subnet()
 
     def _setup_logging(self, log_file):
-        """Konfigurasi logging"""
+
         logging.basicConfig(
             filename=log_file, 
             level=logging.INFO, 
@@ -31,7 +29,7 @@ class WiFiMonitor:
         return logging.getLogger(__name__)
 
     def _get_local_ip(self):
-        """Dapatkan alamat IP lokal"""
+
         try:
             # buat soket sementara untuk mencari IP
             s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -44,7 +42,7 @@ class WiFiMonitor:
             return '127.0.0.1'
 
     def _get_subnet(self):
-        """Dapatkan subnet dari IP lokal"""
+
         try:
             # buat objek IP dengan subnet /24
             network = ipaddress.IPv4Network(f"{self.local_ip}/24", strict=False)
@@ -54,16 +52,7 @@ class WiFiMonitor:
             return None
 
     def fast_network_scan(self, timeout=1, max_threads=100):
-        """
-        Pindai jaringan dengan metode concurrent untuk kecepatan maksimal
-        
-        Args:
-            timeout (float): Waktu tunggu untuk setiap ping
-            max_threads (int): Jumlah maksimal thread yang diperbolehkan
-        
-        Returns:
-            List dari perangkat yang terdeteksi
-        """
+
         if not self.subnet:
             return []
 
@@ -118,9 +107,7 @@ class WiFiMonitor:
         return devices
 
     def _get_mac_address(self, ip):
-        """
-        Dapatkan alamat MAC berdasarkan sistem operasi
-        """
+
         try:
             if self.os_type == 'Windows':
                 #pakai perintah arp untuk Windows
@@ -146,9 +133,7 @@ class WiFiMonitor:
                          for elements in range(0,2*6,2)][::-1])
 
     def get_network_info(self):
-        """
-        Dapatkan informasi jaringan komprehensif
-        """
+
         try:
             # mengidentifikasi jaringan
             network_details = {
@@ -163,9 +148,8 @@ class WiFiMonitor:
             return {}
 
     def continuous_monitoring(self, interval=300):
-        """
-        Monitoring berkelanjutan dengan interval tertentu
-        """
+
+        
         def monitor_task():
             while True:
                 try:
