@@ -12,12 +12,7 @@ from typing import Dict, List, Optional
 
 class WiFiMonitor:
     def __init__(self, log_file='wifi_monitoring.log'):
-        """
-        Inisialisasi sistem monitoring jaringan Wi-Fi
-        
-        Args:
-            log_file (str): Path file log untuk pencatatan aktivitas
-        """
+
         self.os_type = platform.system()
         self.current_network = None
         
@@ -30,12 +25,7 @@ class WiFiMonitor:
         self.logger = logging.getLogger(__name__)
 
     def identify_current_network(self) -> Optional[Dict[str, str]]:
-        """
-        Identifikasi jaringan WiFi yang sedang digunakan
-        
-        Returns:
-            Dict dengan informasi jaringan atau None
-        """
+
         try:
             if self.os_type == 'Windows':
                 result = subprocess.run(['netsh', 'wlan', 'show', 'interfaces'], 
@@ -79,12 +69,7 @@ class WiFiMonitor:
         return None
 
     def get_local_devices(self) -> List[Dict[str, str]]:
-        """
-        Dapatkan daftar perangkat di jaringan lokal
-        
-        Returns:
-            Daftar perangkat dalam jaringan
-        """
+
         try:
             # mencari alamat IP lokal
             hostname = socket.gethostname()
@@ -139,13 +124,7 @@ class WiFiMonitor:
             return []
 
     def get_network_speed(self) -> Dict[str, float]:
-        """
-        Dapatkan kecepatan download dan upload
-        Catatan: Memerlukan koneksi internet
-        
-        Returns:
-            Dict dengan kecepatan dalam Mbps
-        """
+
         try:
             # pakai API eksternal untuk tes kecepatan
             speed_test = requests.get('https://api.ipify.org/speed', timeout=10)
@@ -162,12 +141,7 @@ class WiFiMonitor:
             return {'download_speed': 0, 'upload_speed': 0}
 
     def get_signal_strength(self) -> Optional[int]:
-        """
-        Dapatkan kekuatan sinyal jaringan WiFi
-        
-        Returns:
-            Kekuatan sinyal dalam persen
-        """
+
         try:
             if self.os_type == 'Windows':
                 result = subprocess.run(['netsh', 'wlan', 'show', 'interfaces'], 
@@ -183,12 +157,7 @@ class WiFiMonitor:
         return None
 
     def continuous_monitoring(self, interval=300):
-        """
-        Monitoring berkelanjutan dengan interval tertentu
-        
-        Args:
-            interval (int): Interval pemantauan dalam detik
-        """
+
         def monitor_task():
             while True:
                 try:
