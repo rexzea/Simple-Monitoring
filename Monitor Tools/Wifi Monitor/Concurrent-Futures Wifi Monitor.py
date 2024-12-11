@@ -10,19 +10,12 @@ from typing import Dict, List, Optional
 
 class OptimizedWiFiMonitor:
     def __init__(self, log_file='wifi_monitoring.log'):
-        """
-        Inisialisasi sistem monitoring jaringan WiFi dengan optimasi
-        
-        Args:
-            log_file (str): Path file log untuk pencatatan aktivitas
-        """
+
         self.os_type = platform.system()
         self.logger = self._setup_logger(log_file)
 
     def _setup_logger(self, log_file):
-        """
-        Konfigurasi logger
-        """
+
         logging.basicConfig(
             filename=log_file, 
             level=logging.INFO, 
@@ -31,9 +24,7 @@ class OptimizedWiFiMonitor:
         return logging.getLogger(__name__)
 
     def identify_network(self):
-        """
-        Identifikasi jaringan WiFi yang sedang digunakan
-        """
+
         try:
             # menvari GateAway dan IP Lokal
             gateways = self._get_network_gateways()
@@ -47,9 +38,7 @@ class OptimizedWiFiMonitor:
             return None
 
     def _get_local_ip(self):
-        """
-        Dapatkan alamat IP lokal
-        """
+
         try:
             # alternatif
             s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -61,16 +50,12 @@ class OptimizedWiFiMonitor:
             return '127.0.0.1'
 
     def _get_network_prefix(self):
-        """
-        prefix jaringan
-        """
+
         local_ip = self._get_local_ip()
         return '.'.join(local_ip.split('.')[:3])
 
     def _get_network_gateways(self):
-        """
-        gateway jaringan
-        """
+
         try:
             if self.os_type == 'Windows':
                 # for windows
@@ -96,23 +81,12 @@ class OptimizedWiFiMonitor:
             return []
 
     def scan_network_fast(self, timeout=1, max_threads=100):
-        """
-        pindai jaringan dengan metode konkurensi untuk kecepatan
-        
-        Args:
-            timeout (int): Waktu timeout untuk setiap ping
-            max_threads (int): Jumlah maksimal thread konkurensi
-        
-        Returns:
-            List perangkat yang aktif di jaringan
-        """
+
         network_prefix = self._get_network_prefix()
         active_devices = []
 
         def ping_ip(ip):
-            """
-            Fungsi internal untuk melakukan ping
-            """
+
             try:
                 # memeakai ping timeout pendek
                 result = subprocess.run(
@@ -157,9 +131,7 @@ class OptimizedWiFiMonitor:
         return active_devices
 
     def get_network_info(self):
-        """
-        Dapatkan informasi komprehensif jaringan
-        """
+
         network = self.identify_network()
         devices = self.scan_network_fast()
         
@@ -170,9 +142,7 @@ class OptimizedWiFiMonitor:
         }
 
     def continuous_monitoring(self, interval=300):
-        """
-        Monitoring berkelanjutan
-        """
+
         def monitor_task():
             while True:
                 try:
