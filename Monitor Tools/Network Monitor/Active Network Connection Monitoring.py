@@ -44,7 +44,6 @@ class NetworkConnectionMonitor:
         self.process_cache = {}
     
     def _init_database(self):
-        """membuat database untuk menyimpan log koneksi"""
         try:
             with sqlite3.connect(self.db_path) as conn:
                 cursor = conn.cursor()
@@ -175,7 +174,7 @@ class NetworkConnectionMonitor:
                 self.log_alert('SUSPICIOUS_CONNECTION', alert_msg)
                 self.logger.warning(f"Terdeteksi {len(suspicious_connections)} koneksi mencurigakan!")
                 
-                # Tampilkan detail di console
+                # detail di console
                 print("\n🚨 PERINGATAN: Koneksi Mencurigakan Terdeteksi 🚨")
                 for conn in suspicious_connections:
                     print(f"🔴 Proses: {conn['process']}")
