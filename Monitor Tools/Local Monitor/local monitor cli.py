@@ -62,9 +62,6 @@ def get_gpu_info():
         return f"Error mendapatkan info GPU: {e}"
 
 def monitor_system():
-    """
-    Memantau penggunaan sumber daya sistem
-    """
     print("=" * 50)
     print("🖥️  SISTEM MONITORING".center(50))
     print("=" * 50)
